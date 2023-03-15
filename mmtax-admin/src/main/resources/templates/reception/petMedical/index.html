@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('宠物列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								宠物名字：<input type="text" name="petName"/>
+							</li>
+
+							<li>
+								宠物种类：<input type="text" name="petType"/>
+							</li>
+
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="$.operate.add()" >
+					<i class="fa fa-plus"></i> 添加
+				</a>
+				<!--<a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()" >-->
+				<!--	<i class="fa fa-edit"></i> 修改-->
+				<!--</a>-->
+				<!--<a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()">-->
+				<!--	<i class="fa fa-remove"></i> 删除-->
+				<!--</a>-->
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+		 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			 <div class="modal-dialog">
+				 <div class="modal-content">
+					 <div class="modal-header">
+						 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						 <h4 class="modal-title" id="myModalLabel">挂号</h4>
+					 </div>
+					 <form class="form-horizontal" role="form">
+					 <div class="form-group">
+						 <label for="doctor" class="col-sm-2 control-label">名字</label>
+						 <div class="col-sm-10">
+							 <select name="petInfoType" id="doctor">
+								 <option th:each="dict : ${doctor}" th:text="${dict.userName}" th:value="${dict.userId}" ></option>
+							 </select>
+						 </div>
+					 </div>
+					 </form>
+					 <input id="rowId" value="" type="hidden" >
+					 <div class="modal-footer">
+						 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						 <button type="button" class="btn btn-success" onclick="registry()">确认挂号</button>
+					 </div>
+				 </div><!-- /.modal-content -->
+			 </div><!-- /.modal -->
+		 </div>
+		 <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			 <div class="modal-dialog">
+				 <div class="modal-content">
+					 <div class="modal-header">
+						 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						 <h4 class="modal-title" id="recordModalLabel">查看病历</h4>
+					 </div>
+					 <form class="form-horizontal" role="form">
+						 <div class="form-group">
+							 <label for="disease" class="col-sm-2 control-label">疾病</label>
+							 <div class="col-sm-10">
+								 <input id="disease" name="disease"  class="form-control" type="text" readonly>
+							 </div>
+						 </div>
+						 <div class="form-group">
+							 <label for="method" class="col-sm-2 control-label">治疗方法</label>
+							 <div class="col-sm-10">
+								 <input id="method" name="method"  class="form-control" type="text" readonly>
+							 </div>
+						 </div>
+						 <div class="form-group">
+							 <label for="remake" class="col-sm-2 control-label">备注</label>
+							 <div class="col-sm-10">
+								 <input id="remake" name="remake"  class="form-control" type="text" readonly>
+							 </div>
+						 </div>
+					 </form>
+					 <input id="petInfoId" class="form-control" type="hidden">
+					 <div class="modal-footer">
+						 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						 <button type="button" class="btn btn-success" onclick="treatmentFinished()">诊疗结束</button>
+					 </div>
+				 </div><!-- /.modal-content -->
+			 </div><!-- /.modal -->
+		 </div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+		var sex = [[${@dict.getType('pet_sex')}]];
+		var signs = [[${@dict.getType('pet_info_type')}]];
+
+        var editFlag = true;
+        var removeFlag = true;
+        var prefix = ctx + "reception/petMedical";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+				exportUrl: prefix + "/export",
+                modalName: "宠物",
+		        showExport: true,
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'id',
+					title : '',
+					visible: false
+				},
+
+				{
+					field : 'petName',
+					title : '宠物名字',
+				},
+				{
+					field : 'petType',
+					title : '宠物种类',
+				},
+				{
+					field : 'petSex',
+					title : '宠物性别',
+					formatter: function (value, row, index) {
+						return $.table.selectDictLabel(sex, row.petSex);
+					}
+				},
+				{
+					field : 'petAge',
+					title : '宠物年龄',
+				},
+
+				{
+					field : 'remake',
+					title : '备注',
+				},
+
+				{
+					field : 'createTime',
+					title : '创建时间',
+				},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	var actions = [];
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.petInfoType == 6){
+							actions.push('<a class="btn btn-warning btn-xs ' + '" href="javascript:void(0)"  onclick="	setId(\'' + row.id + '\')"><i class="fa fa-remove"></i>挂号</a>');
+						}
+                        if(row.petInfoType == 1){
+							actions.push('<a class="btn btn-primary btn-xs ' + '" href="javascript:void(0)"  onclick="getMedicalRecord(\'' + row.id + '\')"><i class="fa fa-remove"></i>查看病历</a>');
+						}
+						return actions.join('');
+		            }
+		        }]
+            };
+            $.table.init(options);
+        });
+        function setId(id){
+			$("#rowId").val(id)
+			$('#myModal').modal('show')
+		}
+        function registry(){
+
+        	let doctor = $("#doctor").val()
+			let id = $("#rowId").val()
+			console.log(doctor+"    "+id)
+			$.post('/reception/petMedical/registry',{
+				id:id,
+				userId:doctor
+			},function (res){
+				if(res.code == 0){
+					alert("挂号成功")
+					$('#myModal').modal('hide')
+					$.table.search()
+				}
+			})
+		}
+
+		function getMedicalRecord(id){
+			$.post('/reception/petMedical/getMedicalRecord',{
+				id:id
+			},function (res){
+				let data = res.data
+				$("#remake").val(data.remake)
+				$("#disease").val(data.disease)
+				$("#method").val(data.method)
+				$("#petInfoId").val(data.petInfoId)
+				$('#recordModal').modal('show')
+			})
+		}
+		function treatmentFinished(){
+			let petInfoId = $("#petInfoId").val()
+			$.post('/reception/petMedical/treatmentFinished',{
+				petInfoId:petInfoId
+			},function (res){
+				alert("诊疗结束")
+				$('#recordModal').modal('hide')
+				$.table.search()
+			})
+		}
+
+
+    </script>
+</body>
+</html>
