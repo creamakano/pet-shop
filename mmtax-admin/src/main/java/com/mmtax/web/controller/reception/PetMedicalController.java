@@ -32,10 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import java.util.Date;
@@ -44,7 +41,7 @@ import java.util.List;
 @Api(tags = " 前台宠物医疗")
 @Controller
 @RequestMapping("/reception/petMedical")
-public class PetMedicalController {
+public class PetMedicalController extends BaseController{
 
     protected final Logger logger = LoggerFactory.getLogger(BaseController.class);
     private String prefix = "/reception/petMedical";
@@ -160,6 +157,41 @@ public class PetMedicalController {
     {
         return petMedicalService.treatmentFinished(petInfoId);
     }
+
+
+    /**
+     * 修改宠物
+     */
+    @ApiOperation(value = "跳转修改宠物页面")
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        PetInfo petInfo = petMedicalService.selectPetInfoById(id);
+        mmap.put("petInfo", petInfo);
+        return prefix + "/edit";
+    }
+    /**
+     * 修改保存宠物
+     */
+    @ApiOperation(value = "修改保存宠物")
+    @PostMapping("/edit")
+    @ResponseBody
+    public AjaxResult editSave(PetInfo petInfo)
+    {
+        return toAjax(petMedicalService.updatePetInfo(petInfo));
+    }
+
+    /**
+     * 删除宠物
+     */
+    @ApiOperation(value = "删除宠物")
+    @PostMapping( "/remove")
+    @ResponseBody
+    public AjaxResult remove(String ids)
+    {
+        return toAjax(petMedicalService.deletePetInfoByIds(ids));
+    }
+
 
     /**
      * 设置请求分页数据

@@ -92,6 +92,7 @@ public class PetSaleRecordServiceImpl implements IPetSaleRecordService
         selectRecord.setId(petSaleRecord.getId());
         PetSaleRecord record = petSaleRecordMapper.selectOne(selectRecord);
         PetInfo petInfo = new PetInfo();
+        petInfo.setPetInfoType(6);
         petInfo.setId(record.getPetInfoId());
         petInfo.setMasterId(masterInfo.getId());
         petInfoMapper.updateByPrimaryKeySelective(petInfo);

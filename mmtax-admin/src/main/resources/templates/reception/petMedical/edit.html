@@ -37,14 +37,6 @@
 					<input id="petAge" name="petAge" th:field="*{petAge}" class="form-control" type="text">
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">宠物信息类型：</label>
-				<div class="col-sm-8">
-					<select name="petInfoType" th:with="type=${@dict.getType('pet_info_type')}">
-						<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="*{petInfoType} == ${dict.dictValue}"></option>
-					</select>
-				</div>
-			</div>
 
 			<div class="form-group">	
 				<label class="col-sm-3 control-label">备注：</label>
@@ -61,7 +53,7 @@
 					document.getElementById("img").src = $("#photo").val();
 		}
 							});
-		var prefix = ctx + "reception/petAdoption;
+		var prefix = ctx + "reception/petMedical"
 		$("#form-petInfo-edit").validate({
 			rules:{
 				xxxx:{
