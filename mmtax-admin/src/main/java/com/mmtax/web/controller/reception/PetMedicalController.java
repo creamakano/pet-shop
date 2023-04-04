@@ -1,5 +1,9 @@
 package com.mmtax.web.controller.reception;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mmtax.business.domain.PetInfo;
@@ -24,6 +28,7 @@ import com.mmtax.common.utils.sql.SqlUtil;
 import com.mmtax.framework.shiro.session.OnlineSession;
 import com.mmtax.system.domain.SysDictType;
 import com.mmtax.system.domain.SysUser;
+import com.mmtax.web.config.AlipayConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Api(tags = " 前台宠物医疗")
 @Controller
@@ -121,8 +127,7 @@ public class PetMedicalController extends BaseController{
     @ApiOperation(value = "宠物挂号")
     @PostMapping("/registry")
     @ResponseBody
-    public AjaxResult registry(Integer id,Integer userId,ServletRequest request)
-    {
+    public String registry(Integer id,Integer userId,ServletRequest request) throws AlipayApiException {
         petInfoMapper.updatePetType(id,"1");
         //添加宠物病历信息
         PetMedicalRecord petMedicalRecord = new PetMedicalRecord();
@@ -135,12 +140,38 @@ public class PetMedicalController extends BaseController{
         petMedicalRecord.setCreateTime(new Date());
         petMedicalRecord.setUpdateTime(new Date());
         medicalRecordMapper.insertSelective(petMedicalRecord);
-        return AjaxResult.success();
+
+        AlipayClient alipayClient = new DefaultAlipayClient(
+                AlipayConfig.gatewayUrl,
+                AlipayConfig.app_id,
+                AlipayConfig.merchant_private_key, "json",
+                AlipayConfig.charset,
+                AlipayConfig.alipay_public_key,
+                AlipayConfig.sign_type);
+        //设置请求参数
+        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        //这里设置支付后跳转的地址
+        alipayRequest.setReturnUrl(AlipayConfig.return_url);
+        String out_trade_no = UUID.randomUUID().toString().replace("-","");
+        String total_amount = String.valueOf("10");
+        String subject = "宠物挂号收费";
+        String body =null;
+        String timeout_express = "5m";
+        alipayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
+                + "\"total_amount\":\""+ total_amount +"\","
+                + "\"subject\":\""+ subject +"\","
+                + "\"body\":\""+ body +"\","
+                + "\"timeout_express\":\""+ timeout_express +"\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+        String form = alipayClient.pageExecute(alipayRequest).getBody();
+        form = form.replace("document.forms[0].submit();","document.forms['punchout_form'].submit()");
+        return form;
     }
+
     /**
-     * 宠物挂号
+     *
      */
-    @ApiOperation(value = "宠物挂号")
+    @ApiOperation(value = "")
     @PostMapping("/getMedicalRecord")
     @ResponseBody
     public AjaxResult getMedicalRecord(Integer id)

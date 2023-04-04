@@ -26,6 +26,11 @@
 						</ul>
 					</div>
 				</form>
+				<form action="/reception/petMedical/registry" id="payForm" method="post">
+					<input name="userId" id="doctorId" type="hidden">
+					<input name="id" id="recordId" type="hidden">
+					<input name="cost" value="10" type="hidden">
+				</form>
 			</div>
 			
 	        <div class="btn-group-sm" id="toolbar" role="group">
@@ -182,20 +187,28 @@
 			$('#myModal').modal('show')
 		}
         function registry(){
-
+			console.log()
         	let doctor = $("#doctor").val()
 			let id = $("#rowId").val()
-			console.log(doctor+"    "+id)
-			$.post('/reception/petMedical/registry',{
-				id:id,
-				userId:doctor
-			},function (res){
-				if(res.code == 0){
-					alert("挂号成功")
-					$('#myModal').modal('hide')
-					$.table.search()
-				}
-			})
+			$("#doctorId", window.parent.document).val(doctor)
+			$("#recordId", window.parent.document).val(id)
+			$("#payForm", window.parent.document).submit()
+			// console.log(doctor+"    "+id)
+			// $.post('/reception/petMedical/registry',{
+			// 	id:id,
+			// 	userId:doctor
+			// },function (res){
+			// 	if(res.code == 0){
+			// 		alert("挂号成功")
+			// 		// $('#myModal').modal('hide')
+			// 		// $.table.search()
+			// 		console.log(res.data)
+			// 		// window.parent.document.querySelector('#allBody').innerHTML = res.data
+			// 		$('#allBody', window.parent.document).html(res.data)
+			// 		console.log("as")
+			// 		document.forms['punchout_form'].submit()
+			// 	}
+			// })
 		}
 
 		function getMedicalRecord(id){

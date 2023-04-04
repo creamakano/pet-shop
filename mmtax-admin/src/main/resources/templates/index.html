@@ -20,9 +20,12 @@
     <link th:href="@{/css/skins.css}" rel="stylesheet"/>
     <link th:href="@{/mmtax/css/mmtax-ui.css?v=3.3.0}" rel="stylesheet"/>
 </head>
-<body class="fixed-sidebar full-height-layout gray-bg" style="overflow: hidden" th:classappend="${@config.getKey('sys.index.skinName')}">
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow: hidden" th:classappend="${@config.getKey('sys.index.skinName')}" id="allBody">
 <div id="wrapper">
-
+    <form action="/reception/petMedical/registry" id="payForm" method="post">
+        <input name="userId" id="doctorId" type="hidden">
+        <input name="id" id="recordId" type="hidden">
+    </form>
     <!--左侧导航开始-->
     <nav class="navbar-default navbar-static-side" role="navigation">
         <div class="nav-close">
