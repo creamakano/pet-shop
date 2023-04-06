@@ -17,5 +17,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
+    <update id="updateInfo">
+        update tbl_pet_master_info
+        set phonenumber = #{info.phonenumber},
+            email = #{info.email},
+            sex = #{info.sex},
+            name = #{info.name}
+        where phoneNumber = #{phoneNumber}
+    </update>
+
 
 </mapper>

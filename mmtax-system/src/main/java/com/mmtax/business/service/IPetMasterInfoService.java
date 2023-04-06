@@ -23,4 +23,5 @@ public interface IPetMasterInfoService
 
     int deletePetMasterInfoByIds(String ids);
 
+    void updateInfo(String originalPhoneNumber, PetMasterInfo masterInfo);
 }

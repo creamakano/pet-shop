@@ -47,7 +47,7 @@
         <div class="signinpanel">
             <div class="row">
                 <div class="col-sm-12">
-                    <form id="signupForm">
+                    <form id="signupForm" style="background: rgba(255,255,255,.2) ;border: 0px;padding-bottom: 0px;">
                         <h4 class="no-margins" style="font-size:18px;">登录：</h4>
                         <input type="text" id="loginUserName"    name="username" class="form-control uname"     placeholder="用户名" value=""    />
                         <input type="text" id="loginUserPhone" style="display: none;"  name="phonenumber" class="form-control uname"     placeholder="手机号码" value=""    />
@@ -69,10 +69,16 @@
 
                         <button class="btn btn-success btn-block" id="btnSubmit" data-loading="正在验证登录，请稍后...">登录</button>
                     </form>
+                    <div style="width: 438px;margin: 0 auto;background: rgba(255,255,255,.2);padding-bottom: 20px;">
+                        <button class="btn btn-success btn-block" id="registry" >注册</button>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+
 <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]];</script>
 <!-- 全局js -->
 <script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
@@ -85,6 +91,16 @@
     <script src="../static/mmtax/js/mmtax-ui.js" th:src="@{/mmtax/js/mmtax-ui.js?v=3.3.0}"></script>
 <script src="../static/mmtax/login.js" th:src="@{/mmtax/login.js}"></script>
 </body>
+<script>
+    $("#registry").click(function (){
+        window.location.href='/registry'
+
+
+    })
+
+
+
+</script>
 <style>
     .receptionLogin{
         margin-top: -20px;

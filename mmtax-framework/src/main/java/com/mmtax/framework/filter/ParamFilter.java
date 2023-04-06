@@ -47,6 +47,7 @@ public class ParamFilter implements Filter{
                 if (
                         !request.getRequestURI().contains("/reception")
                         && !request.getRequestURI().contains("/login")
+                        && !request.getRequestURI().contains("/registry")
                         && !request.getRequestURI().contains("/logout")
                         && !request.getRequestURI().contains("/js")
                         && !request.getRequestURI().contains("/css")

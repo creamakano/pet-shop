@@ -1,5 +1,7 @@
 package com.mmtax.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mmtax.business.domain.PetMasterInfo;
 import com.mmtax.business.dto.PetInfoQueryDTO;
 import com.mmtax.business.mapper.PetMasterInfoMapper;
@@ -70,6 +72,7 @@ public class PetMasterInfoServiceImpl implements IPetMasterInfoService
         petMasterInfo.setDelStatus(DelStatusEnum.NORMAL.getCode());
         petMasterInfo.setCreateTime(new Date());
         petMasterInfo.setUpdateTime(new Date());
+        petMasterInfo.setProviderId(1);
         petMasterInfoMapper.insertSelective(petMasterInfo);
 
         SysUser user = new SysUser();
@@ -122,5 +125,10 @@ public class PetMasterInfoServiceImpl implements IPetMasterInfoService
             petMasterInfoMapper.updateByPrimaryKey(info);
         }
         return 1;
+    }
+
+    @Override
+    public void updateInfo(String originalPhoneNumber, PetMasterInfo masterInfo) {
+        petMasterInfoMapper.updateInfo(originalPhoneNumber,masterInfo);
     }
 }

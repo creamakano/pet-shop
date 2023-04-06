@@ -1,5 +1,7 @@
 package com.mmtax.web.controller.system;
 
+import com.mmtax.business.domain.PetMasterInfo;
+import com.mmtax.business.service.IPetMasterInfoService;
 import com.mmtax.common.annotation.Log;
 import com.mmtax.common.config.Global;
 import com.mmtax.common.core.controller.BaseController;
@@ -37,6 +39,9 @@ public class SysProfileController extends BaseController
     
     @Autowired
     private SysPasswordService passwordService;
+
+    @Autowired
+    private IPetMasterInfoService masterInfoService;
 
     /**
      * 个人信息
@@ -125,6 +130,7 @@ public class SysProfileController extends BaseController
     public AjaxResult update(SysUser user)
     {
         SysUser currentUser = ShiroUtils.getSysUser();
+        SysUser originalUser = ShiroUtils.getSysUser();
         currentUser.setUserName(user.getUserName());
         currentUser.setEmail(user.getEmail());
         currentUser.setPhonenumber(user.getPhonenumber());
@@ -132,9 +138,18 @@ public class SysProfileController extends BaseController
         if (userService.updateUserInfo(currentUser) > 0)
         {
             ShiroUtils.setSysUser(userService.selectUserById(currentUser.getUserId()));
-            return success();
+            // return success();
         }
-        return error();
+        if(originalUser.getRoles().get(0).getRoleId() == 4){
+            PetMasterInfo masterInfo = new PetMasterInfo();
+            String originalPhoneNumber = originalUser.getPhonenumber();
+            masterInfo.setPhonenumber(currentUser.getPhonenumber());
+            masterInfo.setSex(currentUser.getSex());
+            masterInfo.setEmail(currentUser.getEmail());
+            masterInfo.setName(currentUser.getUserName());
+            masterInfoService.updateInfo(originalPhoneNumber,masterInfo);
+        }
+        return success();
     }
 
     /**
