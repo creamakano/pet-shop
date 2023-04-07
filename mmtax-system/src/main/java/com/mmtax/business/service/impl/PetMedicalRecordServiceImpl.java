@@ -106,4 +106,10 @@ public class PetMedicalRecordServiceImpl implements IPetMedicalRecordService
         }
         return 1;
     }
+
+    @Override
+    public List<PetInfoDTO> selectPetMedicalRecordAllList(PetInfoQueryDTO queryDTO) {
+        List<PetInfoDTO> infos = petMedicalRecordMapper.selectPetMedicalRecordAllList(queryDTO);
+        return infos;
+    }
 }

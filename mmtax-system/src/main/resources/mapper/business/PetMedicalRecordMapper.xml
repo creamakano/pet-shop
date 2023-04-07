@@ -47,7 +47,7 @@
         1 = 1
         AND c.del_status = 0
         AND a.pet_info_type = 1
-        AND c.user_id = 10
+        AND c.user_id = #{userId}
         <if test="name != null and name != ''">
             and b.NAME like concat('%',#{name},'%')
         </if>
@@ -68,6 +68,45 @@
         from tbl_pet_medical_record
         where pet_info_id = #{id}
         order by create_time desc
+    </select>
+    <select id="selectPetMedicalRecordAllList" resultType="com.mmtax.business.dto.PetInfoDTO">
+        SELECT
+        b.NAME as name,
+        b.phonenumber as phonenumber,
+        c.id,
+        c.pet_info_id as petInfoId,
+        a.pet_name as petName,
+        a.pet_type as petType,
+        a.pet_sex as petSex,
+        a.pet_age as petAge,
+        a.pet_info_type as petInfoType,
+        c.remake,
+        c.disease as disease,
+        c.method as method,
+        c.del_status as delStatus,
+        c.create_time as createTime,
+        c.update_time as updateTime
+        FROM
+        tbl_pet_medical_record c
+        JOIN tbl_pet_info a ON a.id = c.pet_info_id
+        JOIN tbl_pet_master_info b ON a.master_id = b.id
+        WHERE
+        1 = 1
+        AND c.del_status = 0
+        <if test="name != null and name != ''">
+            and b.NAME like concat('%',#{name},'%')
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            and b.phonenumber like concat('%',#{phonenumber},'%')
+        </if>
+        <if test="petName != null and petName != ''">
+            and a.pet_name like concat('%',#{petName},'%')
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            and c.create_time between concat(#{startDate},' 00:00:00') and concat(#{endDate}, ' 23:59:59')
+        </if>
+        order by
+        c.create_time desc
     </select>
 
 </mapper>

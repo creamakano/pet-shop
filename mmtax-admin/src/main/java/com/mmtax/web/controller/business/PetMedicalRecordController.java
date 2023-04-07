@@ -12,6 +12,7 @@ import com.mmtax.common.core.domain.AjaxResult;
 import com.mmtax.common.core.page.TableDataInfo;
 import com.mmtax.common.enums.BusinessType;
 import com.mmtax.framework.shiro.session.OnlineSession;
+import com.mmtax.system.mapper.SysUserRoleMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -44,6 +45,9 @@ public class PetMedicalRecordController extends BaseController
 	@Autowired
 	private IPetMedicalRecordService petMedicalRecordService;
 
+	@Autowired
+	private SysUserRoleMapper userRoleMapper;
+
 	@ApiOperation(value = "医疗宠物病历列表页面")
 	@RequiresPermissions("business:petMedicalRecord:view")
 	@GetMapping()
@@ -64,8 +68,14 @@ public class PetMedicalRecordController extends BaseController
 		OnlineSession session = (OnlineSession) request.getAttribute(ShiroConstants.ONLINE_SESSION);
 		Long userId = session.getUserId();
 		queryDTO.setUserId(userId);
+		Long roleId = userRoleMapper.getRoleIdByUserId(userId);
 		startPage();
-        List<PetInfoDTO> list = petMedicalRecordService.selectPetMedicalRecordList(queryDTO);
+		List<PetInfoDTO> list ;
+		if(roleId == 4 || roleId == 5){
+			 list = petMedicalRecordService.selectPetMedicalRecordList(queryDTO);
+		}else {
+			list = petMedicalRecordService.selectPetMedicalRecordAllList(queryDTO);
+		}
 		return getDataTable(list);
 	}
 

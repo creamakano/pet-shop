@@ -18,4 +18,6 @@ public interface PetMedicalRecordMapper extends MyMapper<PetMedicalRecord>
     List<PetInfoDTO> selectPetMedicalRecordList(PetInfoQueryDTO queryDTO);
 
     List<PetMedicalRecord> selectByPetInfoId(Integer id);
+
+    List<PetInfoDTO> selectPetMedicalRecordAllList(PetInfoQueryDTO queryDTO);
 }

@@ -25,4 +25,6 @@ public interface IPetMedicalRecordService
     int updatePetMedicalRecord(PetMedicalRecord petMedicalRecord);
 
     int deletePetMedicalRecordByIds(String ids);
+
+    List<PetInfoDTO> selectPetMedicalRecordAllList(PetInfoQueryDTO queryDTO);
 }
