@@ -86,7 +86,7 @@ public class PetMasterInfoServiceImpl implements IPetMasterInfoService
         user.setRoleId(4L);
         user.setStatus("0");
         Long[] roleIds = new Long[]{4L};
-        Long[] postIds = new Long[]{4L};
+        Long[] postIds = new Long[]{5L};
         user.setRoleIds(roleIds);
         user.setPostIds(postIds);
 
